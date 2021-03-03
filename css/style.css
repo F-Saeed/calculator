@@ -65,6 +65,10 @@ main {
   cursor: pointer;
 }
 
+i {
+  pointer-events: none;
+}
+
 .math-symbol {
   color: rgb(167, 196, 250);
 }
