@@ -139,13 +139,13 @@ document.querySelectorAll('#buttons > div').forEach((item) => {
 });
 
 document.addEventListener('keypress', (event) => {
-  if (document.getElementById(event.key).classList.contains('number')) {
+  let key = document.getElementById(event.key);
+
+  if (key.classList.contains('number')) {
     itemNumber(operator, event.key);
-  } else if (
-    document.getElementById(event.key).classList.contains('operator')
-  ) {
+  } else if (key.classList.contains('operator')) {
     itemOperator(firstNumber, secondNumber, event.key);
-  } else if (document.getElementById(event.key).classList.contains('other')) {
+  } else if (key.classList.contains('other')) {
     if (event.target.id === 'equal') {
       equal(firstNumber, secondNumber, operator);
     } else if (event.target.id === 'clear') {
@@ -155,20 +155,7 @@ document.addEventListener('keypress', (event) => {
     } else if (event.target.id === '%') {
       percentage();
     }
-  } else if (document.getElementById(event.key).classList.contains('decimal')) {
+  } else if (key.classList.contains('decimal')) {
     itemDecimal(firstNumber, secondNumber);
   }
 });
-
-/* document.querySelectorAll('#buttons > div').forEach((item) => {
-  item.addEventListener('click', (event) => {
-    console.log(event.target.className);
-  });
-});
-
-
-document.addEventListener('keypress', (event) =>
-  console.log(document.getElementById(event.key).classList.contains('number'))
-);
-
-*/
