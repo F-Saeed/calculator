@@ -29,11 +29,11 @@ let itemNumber = (operator, attr) => {
   if (!operator) {
     firstNumber += parseFloat(attr);
     firstNumber = firstNumber.substring(0, 13);
-    $('#input').text(firstNumber);
+    inputDOM.textContent = firstNumber;
   } else {
     secondNumber += parseFloat(attr);
     secondNumber = secondNumber.substring(0, 13);
-    $('#input').text(secondNumber);
+    inputDOM.textContent = secondNumber;
   }
 };
 
@@ -42,18 +42,18 @@ let itemOperator = (firstNumber, secondNumber, attr) => {
     operator = attr;
     history = `${firstNumber} ${operator}`.substring(0, 15);
 
-    $('#history').text(history);
-    $('#input').empty();
+    historyDOM.textContent = history;
+    inputDOM.textContent = '';
   }
 };
 
 let itemDecimal = () => {
   if (firstNumber && !secondNumber) {
     firstNumber = `${firstNumber.toString()}` + '.';
-    $('#input').text(firstNumber);
+    inputDOM.textContent = firstNumber;
   } else {
     secondNumber = `${secondNumber.toString()}` + '.';
-    $('#input').text(secondNumber);
+    inputDOM.textContent = secondNumber;
   }
 };
 
@@ -61,10 +61,14 @@ let itemDecimal = () => {
 
 let equal = (firstNumber, secondNumber, operator) => {
   if (firstNumber && secondNumber) {
-    firstNumber = operate(firstNumber, secondNumber, operator).toExponential(7);
+    firstNumber = operate(firstNumber, secondNumber, operator);
 
-    $('#input').text(firstNumber);
-    $('#history').empty();
+    if (firstNumber.toString().length > 13) {
+      firstNumber = firstNumber.toExponential(7);
+    }
+
+    inputDOM.textContent = firstNumber;
+    historyDOM.textContent = '';
 
     secondNumber = '';
     operator = '';
@@ -72,8 +76,8 @@ let equal = (firstNumber, secondNumber, operator) => {
 };
 
 let clear = () => {
-  $('#history').empty();
-  $('#input').empty();
+  historyDOM.textContent = '';
+  inputDOM.textContent = '';
 
   operator = '';
   firstNumber = '';
@@ -83,22 +87,26 @@ let clear = () => {
 let backSpace = () => {
   if (firstNumber && !secondNumber) {
     firstNumber = firstNumber.slice(0, -1);
-    $('#input').text(firstNumber);
+    inputDOM.textContent = firstNumber;
   } else {
     secondNumber = secondNumber.slice(0, -1);
-    $('#input').text(secondNumber);
+    inputDOM.textContent = secondNumber;
   }
 };
 
 let percentage = () => {
   if (firstNumber && !secondNumber) {
     firstNumber = firstNumber * 0.01;
-    $('#input').text(firstNumber);
+    input.textContent = firstNumber;
   } else {
     secondNumber = secondNumber * 0.01;
-    $('#input').text(secondNumber);
+    input.textContent = secondNumber;
   }
 };
+
+/* Declaring DOM variables */
+let inputDOM = document.querySelector('#input');
+let historyDOM = document.querySelector('#history');
 
 /* Declaring empty variables */
 let history = '';
@@ -108,12 +116,36 @@ let answer = 0;
 let operator = '';
 
 /* Calculations */
-$(document).click((event) => {
-  if (event.target.className === 'item number') {
-    itemNumber(operator, event.target.id);
-  } else if (event.target.className === 'item operator') {
-    itemOperator(firstNumber, secondNumber, event.target.id);
-  } else if (event.target.className === 'item other') {
+document.querySelectorAll('#buttons > div').forEach((item) => {
+  item.addEventListener('click', (event) => {
+    if (event.target.className === 'item number') {
+      itemNumber(operator, event.target.id);
+    } else if (event.target.className === 'item operator') {
+      itemOperator(firstNumber, secondNumber, event.target.id);
+    } else if (event.target.className === 'item other') {
+      if (event.target.id === 'equal') {
+        equal(firstNumber, secondNumber, operator);
+      } else if (event.target.id === 'clear') {
+        clear();
+      } else if (event.target.id === 'backspace') {
+        backSpace();
+      } else if (event.target.id === '%') {
+        percentage();
+      }
+    } else if (event.target.className === 'item decimal') {
+      itemDecimal(firstNumber, secondNumber);
+    }
+  });
+});
+
+document.addEventListener('keypress', (event) => {
+  if (document.getElementById(event.key).classList.contains('number')) {
+    itemNumber(operator, event.key);
+  } else if (
+    document.getElementById(event.key).classList.contains('operator')
+  ) {
+    itemOperator(firstNumber, secondNumber, event.key);
+  } else if (document.getElementById(event.key).classList.contains('other')) {
     if (event.target.id === 'equal') {
       equal(firstNumber, secondNumber, operator);
     } else if (event.target.id === 'clear') {
@@ -123,27 +155,20 @@ $(document).click((event) => {
     } else if (event.target.id === '%') {
       percentage();
     }
-  } else if (event.target.className === 'item decimal') {
+  } else if (document.getElementById(event.key).classList.contains('decimal')) {
     itemDecimal(firstNumber, secondNumber);
   }
 });
 
-$(document).keypress((event) => {
-  if ($(`#${event.key}`).hasClass('item number')) {
-    itemNumber(operator, event.key);
-  } else if ($(`#${event.key}`).hasClass('item operator')) {
-    itemOperator(firstNumber, secondNumber, event.key);
-  } else if ($(`#${event.key}`).hasClass('item other')) {
-    if (event.target.id === 'equal') {
-      equal(firstNumber, secondNumber, operator);
-    } else if (event.target.id === 'clear') {
-      clear();
-    } else if (event.target.id === 'backspace') {
-      backSpace();
-    } else if (event.target.id === '%') {
-      percentage();
-    }
-  } else if ($(`#${event.key}`).hasClass('item decimal')) {
-    itemDecimal(firstNumber, secondNumber);
-  }
+/* document.querySelectorAll('#buttons > div').forEach((item) => {
+  item.addEventListener('click', (event) => {
+    console.log(event.target.className);
+  });
 });
+
+
+document.addEventListener('keypress', (event) =>
+  console.log(document.getElementById(event.key).classList.contains('number'))
+);
+
+*/
