@@ -1,6 +1,6 @@
-# CV Creator
+# Calculator App
 
-A simple Calculator App created using JavaScript.
+A simple Calculator web app created using JavaScript.
 
 ## Table of Contents
 
